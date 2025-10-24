@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision X - Login</title>
+    <!-- We will use Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+
+    <div class="flex min-h-screen items-center justify-center">
+        <div class="w-full max-w-md p-8 space-y-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-indigo-600 dark:text-indigo-400">Vision X</h1>
+                <p class="mt-2 text-gray-600 dark:text-gray-300">Simplifying Campus Life</p>
+            </div>
+            
+            <!-- This is the login form -->
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email address</label>
+                    <div class="mt-1">
+                        <input id="email" name="email" type="email" autocomplete="email" required
+                               class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                               placeholder="karan@college.edu">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                    <div class="mt-1">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required
+                               class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                               placeholder="password123">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit"
+                            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+            
+            <!-- This message area will show errors -->
+            <div id="error-message" class="text-center text-sm text-red-500"></div>
+
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const errorMessage = document.getElementById('error-message');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Stop the form from refreshing the page
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // This is the "order" being sent to the "waiter" (server.js)
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email, password: password }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // SUCCESS!
+                    errorMessage.textContent = 'Login successful! Redirecting...';
+                    // Redirect to the dashboard page
+                    window.location.href = '/dashboard';
+                } else {
+                    // FAILED!
+                    errorMessage.textContent = data.message || 'Login failed. Please try again.';
+                }
+            } catch (err) {
+                console.error('Login error:', err);
+                errorMessage.textContent = 'Could not connect to the server. Is it running?';
+            }
+        });
+    </script>
+</body>
+</html>
+
