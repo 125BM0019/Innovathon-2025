@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision X - Dashboard</title>
+    <!-- We will use Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- *** FIX 1: Using the correct Lucide script for plain HTML *** -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Create a custom icon size */
+        .icon-sm {
+            width: 20px;
+            height: 20px;
+        }
+        .icon-md {
+            width: 24px;
+            height: 24px;
+        }
+        /* Style for the active nav item */
+        .nav-active {
+            background-color: #4f46e5; /* indigo-700 */
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+    
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation -->
+        <nav class="w-64 bg-white dark:bg-gray-800 shadow-lg flex flex-col">
+            <div class="p-6 text-center">
+                <h1 class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">Vision X</h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Simplifying Campus Life</p>
+            </div>
+            
+            <ul class="flex-1 px-4 space-y-2">
+                <li>
+                    <a href="#dashboard" class="flex items-center p-3 rounded-lg space-x-3 nav-active nav-link" data-target="dashboard-content">
+                        <i data-lucide="layout-dashboard" class="icon-sm"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#events" class="flex items-center p-3 rounded-lg space-x-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 nav-link" data-target="events-content">
+                        <i data-lucide="calendar" class="icon-sm"></i>
+                        <span>Events & News</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#network" class="flex items-center p-3 rounded-lg space-x-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 nav-link" data-target="network-content">
+                        <i data-lucide="users" class="icon-sm"></i>
+                        <span>Peer Networking</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#help" class="flex items-center p-3 rounded-lg space-x-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 nav-link" data-target="help-content">
+                        <i data-lucide="life-buoy" class="icon-sm"></i>
+                        <span>Emergency Help</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#study" class="flex items-center p-3 rounded-lg space-x-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 nav-link" data-target="study-content">
+                        <i data-lucide="timer" class="icon-sm"></i>
+                        <span>Study Tracker</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <img class="w-10 h-10 rounded-full" src="https://placehold.co/100x100/6366f1/white?text=K" alt="User Avatar" id="user-avatar">
+                    <div>
+                        <!-- *** FIX 2: Added ID to make name dynamic *** -->
+                        <p class="font-semibold" id="user-name">Loading...</p>
+                        <a href="login.html" class="text-sm text-red-500 hover:underline">Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            
+            <!-- Dashboard Content (Default) -->
+            <section id="dashboard-content" class="page-content">
+                <!-- *** FIX 2: Added ID to make header dynamic *** -->
+                <h2 class="text-3xl font-semibold mb-6" id="welcome-header">Welcome back!</h2>
+                
+                <!-- This part is still static, but could also be made dynamic -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Feature Card 1 -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-4">
+                            <div class="p-3 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+                                <i data-lucide="calendar" class="text-indigo-600 dark:text-indigo-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold">Events & News</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">3 new events</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Feature Card 2 -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-4">
+                            <div class="p-3 bg-green-100 dark:bg-green-900 rounded-full">
+                                <i data-lucide="users" class="text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold">Peer Networking</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">5 new connections</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Feature Card 3 -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-4">
+                            <div class="p-3 bg-red-100 dark:bg-red-900 rounded-full">
+                                <i data-lucide="life-buoy" class="text-red-600 dark:text-red-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold">Emergency Help</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">2 open requests</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Feature Card 4 -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-4">
+                            <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
+                                <i data-lucide="timer" class="text-yellow-600 dark:text-yellow-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold">Study Tracker</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">4 hours tracked</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Your Week</h3>
+                    <p class="text-gray-600 dark:text-gray-300">This is where a chart or calendar would go showing upcoming deadlines and study sessions.</p>
+                    <div class="h-64 bg-gray-100 dark:bg-gray-700 rounded-lg mt-4 flex items-center justify-center">
+                        (Productivity Chart Placeholder)
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events & News Content (Hidden) -->
+            <section id="events-content" class="page-content hidden">
+                <h2 class="text-3xl font-semibold mb-6">Events & News</h2>
+                <p class="text-gray-600 dark:text-gray-300">This section will have a structured feed of all campus news, club events, and academic deadlines. (Your "Unstructured Information Problem" solver).</p>
+                
+                <!-- *** FIX 2: Removed hard-coded card. Added container for dynamic data. *** -->
+                <div id="events-list" class="space-y-6 mt-6">
+                    <!-- Events will be dynamically inserted here by JavaScript -->
+                </div>
+            </section>
+            
+            <!-- Peer Networking Content (Hidden) -->
+            <section id="network-content" class="page-content hidden">
+                <h2 class="text-3xl font-semibold mb-6">Peer Networking</h2>
+                <p class="text-gray-600 dark:text-gray-300">Find students with similar interests, courses, or career goals. (Your "Peer-to-Peer Networking" solver).</p>
+                
+                <!-- *** FIX 2: Removed hard-coded card. Added container for dynamic data. *** -->
+                <div id="network-grid" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Profile cards will be dynamically inserted here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Emergency Help Content (Hidden) -->
+            <section id="help-content" class="page-content hidden">
+                <h2 class="text-3xl font-semibold mb-6">Emergency Help</h2>
+                <p class="text-gray-600 dark:text-gray-300">A trusted space to get help with small tasks from other students. (Your "Emergency Help" solver).</p>
+                 
+                 <!-- *** FIX 2: Removed hard-coded card. Added container for dynamic data. *** -->
+                <div id="help-list" class="space-y-6 mt-6">
+                    <!-- Help request cards will be dynamically inserted here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Study Tracker Content (Hidden) -->
+            <section id="study-content" class="page-content hidden">
+                <h2 class="text-3xl font-semibold mb-6">Study Tracker</h2>
+                <p class="text-gray-600 dark:text-gray-300">Track your study hours and see where your time is going. (Your "Productivity Issues" solver).</p>
+                <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-4">Start a New Session</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subject</label>
+                            <input id="subject" name="subject" type="text"
+                                   class="w-full max-w-sm px-3 py-2 mt-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm">
+                        </div>
+                        <button class="px-6 py-2 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+                            Start Timer
+                        </button>
+                    </div>
+                    <div class="mt-8">
+                         <h3 class="text-xl font-bold mb-4">Study Log</h3>
+                         <div class="h-48 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                            (Study History Chart Placeholder)
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
