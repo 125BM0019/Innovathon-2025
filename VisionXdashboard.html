@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vision X - Dashboard</title>
-    <!-- We will use Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
@@ -39,7 +38,6 @@
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200">
     
     <div class="flex h-screen">
-        <!-- Sidebar Navigation -->
         <nav class="w-64 bg-white dark:bg-gray-800 shadow-lg flex flex-col">
             <div class="p-6 text-center">
                 <h1 class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">Kloom</h1>
@@ -80,7 +78,6 @@
             </ul>
 
             <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-                <!-- This part will be filled by buildUser() -->
                 <div id="user-profile-summary" class="flex items-center space-x-3">
                     <img id="user-avatar" class="w-10 h-10 rounded-full" src="https://placehold.co/100x100/6366f1/white?text=?" alt="User Avatar">
                     <div>
@@ -91,29 +88,35 @@
             </div>
         </nav>
 
-        <!-- Main Content Area -->
         <main class="flex-1 p-8 overflow-y-auto">
             
-            <!-- Dashboard Content (Default) -->
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Dashboard</h1>
+                <div class="relative w-full max-w-sm">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 icon-sm text-gray-400 dark:text-gray-500"></i>
+                    <input type="text" placeholder="Search events, peers, or help..."
+                        class="w-full py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+            </div>
+
             <section id="dashboard-content" class="page-content">
                 <h2 id="welcome-message" class="text-3xl font-semibold mb-6">Welcome back!</h2>
-                <!-- **FIX**: This grid is now targeted by buildDashboardSummary -->
+
                 <div id="dashboard-summary-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Cards will be dynamically inserted here -->
                     <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
                         <div class="loader"></div>
                         <p class="text-center">Loading Events...</p>
                     </div>
                     <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-                         <div class="loader"></div>
+                        <div class="loader"></div>
                         <p class="text-center">Loading Peers...</p>
                     </div>
-                     <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-                         <div class="loader"></div>
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="loader"></div>
                         <p class="text-center">Loading Help...</p>
                     </div>
-                     <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-                         <div class="flex items-center space-x-4">
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-4">
                             <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
                                 <i data-lucide="timer" class="text-yellow-600 dark:text-yellow-400"></i>
                             </div>
@@ -134,60 +137,67 @@
                 </div>
             </section>
 
-            <!-- Events & News Content (Hidden) -->
             <section id="events-content" class="page-content hidden">
                 <h2 class="text-3xl font-semibold mb-6">Events & News</h2>
                 <p class="text-gray-600 dark:text-gray-300">A structured feed of all campus news, club events, and academic deadlines.</p>
-                <!-- This div will be filled by buildEvents() -->
                 <div id="events-list" class="mt-6 space-y-6">
                     <div class="loader"></div>
                     <p class="text-center">Loading events...</p>
                 </div>
             </section>
             
-            <!-- Peer Networking Content (Hidden) -->
             <section id="network-content" class="page-content hidden">
                 <h2 class="text-3xl font-semibold mb-6">Peer Networking</h2>
                 <p class="text-gray-600 dark:text-gray-300">Find students with similar interests, courses, or career goals.</p>
-                 <!-- This div will be filled by buildProfiles() -->
                 <div id="profiles-grid" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="loader"></div>
                     <p class="text-center">Loading profiles...</p>
                 </div>
             </section>
 
-            <!-- Emergency Help Content (Hidden) -->
             <section id="help-content" class="page-content hidden">
                 <h2 class="text-3xl font-semibold mb-6">Emergency Help</h2>
                 <p class="text-gray-600 dark:text-gray-300">A trusted space to get help with small tasks from other students.</p>
-                <!-- This div will be filled by buildHelp() -->
                 <div id="help-requests-list" class="mt-6 space-y-6">
                     <div class="loader"></div>
                     <p class="text-center">Loading help requests...</p>
                 </div>
             </section>
 
-            <!-- Study Tracker Content (Hidden) -->
             <section id="study-content" class="page-content hidden">
                 <h2 class="text-3xl font-semibold mb-6">Study Tracker</h2>
                 <p class="text-gray-600 dark:text-gray-300">Track your study hours and see where your time is going.</p>
                 <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-                    <h3 class="text-xl font-bold mb-4">Start a New Session</h3>
+                    <h3 class="text-xl font-bold mb-4" id="timer-status-title">Start a New Session</h3>
                     <div class="space-y-4">
-                        <div>
+                        <div id="timer-input-area">
                             <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subject</label>
-                            <input id="subject" name="subject" type="text"
-                                   class="w-full max-w-sm px-3 py-2 mt-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm">
+                            <input id="subject" name="subject" type="text" placeholder="e.g., Calculus Homework"
+                                class="w-full max-w-sm px-3 py-2 mt-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm">
                         </div>
-                        <button class="px-6 py-2 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
-                            Start Timer
-                        </button>
+                        
+                        <div id="timer-display" class="text-6xl font-extrabold text-indigo-600 dark:text-indigo-400 my-6 hidden">
+                            00:00:00
+                        </div>
+
+                        <div id="timer-controls" class="flex space-x-4">
+                            <button id="start-stop-button" class="px-6 py-2 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+                                Start Timer
+                            </button>
+                            <button id="reset-button" class="px-6 py-2 font-semibold text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 hidden">
+                                Finish Session
+                            </button>
+                        </div>
                     </div>
+
                     <div class="mt-8">
-                         <h3 class="text-xl font-bold mb-4">Study Log</h3>
-                         <div class="h-48 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                             (Study History Chart Placeholder)
-                         </div>
+                        <h3 class="text-xl font-bold mb-4">Study Log</h3>
+                        <div id="study-log-list" class="space-y-2">
+                             <p class="text-gray-500">Your completed study sessions will appear here.</p>
+                        </div>
+                        <div class="h-48 bg-gray-100 dark:bg-gray-700 rounded-lg mt-4 flex items-center justify-center">
+                            (Study History Chart Placeholder)
+                        </div>
                     </div>
                 </div>
             </section>
@@ -369,6 +379,119 @@
             });
         }
 
+        // --- Study Tracker Logic (NEW) ---
+        let timerInterval;
+        let startTime;
+        let running = false;
+        let elapsedTime = 0; // Total elapsed time in milliseconds
+
+        const timerDisplay = document.getElementById('timer-display');
+        const startStopButton = document.getElementById('start-stop-button');
+        const resetButton = document.getElementById('reset-button');
+        const subjectInput = document.getElementById('subject');
+        const timerInputArea = document.getElementById('timer-input-area');
+        const timerStatusTitle = document.getElementById('timer-status-title');
+        const studyLogList = document.getElementById('study-log-list');
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        function updateTimerDisplay() {
+            const currentTime = Date.now();
+            elapsedTime += (currentTime - startTime);
+            startTime = currentTime;
+            timerDisplay.textContent = formatTime(elapsedTime);
+        }
+
+        function startTimer() {
+            if (running) return;
+
+            const subject = subjectInput.value.trim();
+            if (!subject) {
+                alert("Please enter a subject for your study session.");
+                return;
+            }
+
+            running = true;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+
+            // Update UI
+            startStopButton.textContent = 'Pause Timer';
+            startStopButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+            startStopButton.classList.add('bg-red-600', 'hover:bg-red-700');
+            resetButton.classList.remove('hidden');
+            timerDisplay.classList.remove('hidden');
+            timerInputArea.classList.add('hidden');
+            timerStatusTitle.textContent = `Current Session: ${subject}`;
+        }
+
+        function pauseTimer() {
+            if (!running) return;
+
+            running = false;
+            clearInterval(timerInterval);
+            startStopButton.textContent = 'Resume Timer';
+            startStopButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+            startStopButton.classList.add('bg-green-600', 'hover:bg-green-700');
+        }
+
+        function stopTimerAndLog() {
+            pauseTimer();
+            
+            const subject = subjectInput.value.trim();
+            const duration = formatTime(elapsedTime);
+            const durationInHours = (elapsedTime / (1000 * 60 * 60)).toFixed(2);
+            const now = new Date().toLocaleString();
+
+            if (elapsedTime > 1000) { // Log only if time > 1 second
+                 // Add to log
+                const logEntry = document.createElement('div');
+                logEntry.className = 'p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex justify-between items-center';
+                logEntry.innerHTML = `
+                    <span class="font-medium">${subject}</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-300">${duration} (${durationInHours} hrs) - ${now}</span>
+                `;
+                studyLogList.prepend(logEntry); // Add newest at the top
+                
+                // Remove placeholder if it exists
+                const placeholder = studyLogList.querySelector('.text-gray-500');
+                if(placeholder) placeholder.remove();
+
+            }
+
+            // Reset state and UI
+            elapsedTime = 0;
+            subjectInput.value = '';
+            timerDisplay.textContent = '00:00:00';
+            running = false;
+            
+            startStopButton.textContent = 'Start Timer';
+            startStopButton.classList.remove('bg-green-600', 'hover:bg-green-700');
+            startStopButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+            startStopButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            resetButton.classList.add('hidden');
+            timerDisplay.classList.add('hidden');
+            timerInputArea.classList.remove('hidden');
+            timerStatusTitle.textContent = 'Start a New Session';
+        }
+
+        startStopButton.addEventListener('click', () => {
+            if (!running) {
+                startTimer();
+            } else {
+                pauseTimer();
+            }
+        });
+
+        resetButton.addEventListener('click', stopTimerAndLog);
+
+
         // --- Main Page Load Function ---
         async function loadDashboardData() {
             // Fetch all data in parallel
@@ -448,6 +571,38 @@
                     
                     // Update URL hash manually for history
                     history.pushState(null, '', link.getAttribute('href'));
+
+                     // Special handling for Study Tracker: If clicked, ensure timer state is visible
+                    if (targetId === 'study-content') {
+                        if (running) {
+                             // If running, show timer display and controls
+                            timerDisplay.classList.remove('hidden');
+                            timerInputArea.classList.add('hidden');
+                            resetButton.classList.remove('hidden');
+                            timerStatusTitle.textContent = `Current Session: ${subjectInput.value.trim()}`;
+                            startStopButton.textContent = 'Pause Timer';
+                            startStopButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-green-600', 'hover:bg-green-700');
+                            startStopButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                        } else if (elapsedTime > 0) {
+                            // If paused, show timer display, allow resume
+                            timerDisplay.classList.remove('hidden');
+                            timerInputArea.classList.add('hidden');
+                            resetButton.classList.remove('hidden');
+                            timerStatusTitle.textContent = `Paused Session: ${subjectInput.value.trim()}`;
+                            startStopButton.textContent = 'Resume Timer';
+                            startStopButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700');
+                            startStopButton.classList.add('bg-green-600', 'hover:bg-green-700');
+                        } else {
+                            // Not running or paused, show input
+                            timerDisplay.classList.add('hidden');
+                            timerInputArea.classList.remove('hidden');
+                            resetButton.classList.add('hidden');
+                            timerStatusTitle.textContent = 'Start a New Session';
+                            startStopButton.textContent = 'Start Timer';
+                            startStopButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'bg-red-600', 'hover:bg-red-700');
+                            startStopButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                        }
+                    }
                 });
             });
             
@@ -456,11 +611,22 @@
                 const hash = window.location.hash || '#dashboard';
                 const targetLink = document.querySelector(`.nav-link[href="${hash}"]`);
                 if (targetLink) {
-                    targetLink.click();
+                    // Manually trigger click to ensure logic runs
+                    targetLink.click(); 
                 }
             };
+
+            // Set initial state on load based on hash
+            const initialHash = window.location.hash || '#dashboard';
+            const initialLink = document.querySelector(`.nav-link[href="${initialHash}"]`);
+            if (initialLink) {
+                 // Trigger a synthetic click to set initial page/styles
+                initialLink.dispatchEvent(new Event('click'));
+            } else {
+                 // Default to dashboard if hash is invalid
+                document.getElementById('dashboard-content').classList.remove('hidden');
+            }
         });
     </script>
 </body>
 </html>
-
