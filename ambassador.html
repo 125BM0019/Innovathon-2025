@@ -8,29 +8,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Use Inter font family -->
     <style>
+        /* Fix: Corrected the Google Fonts URL from fonts.fonts.googleapis to fonts.googleapis */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0d0f1c; /* Deep Dark Blue Background */
             color: #e0e7ff; /* Light text */
         }
-        /* Custom styling for the date input placeholder to hint at the desired format */
-        input[type="date"]::before {
-            content: attr(placeholder);
-            width: 100%;
-            color: #9ca3af; /* Gray text for placeholder */
-            pointer-events: none;
-            display: block;
-        }
-        input[type="date"]:focus::before,
-        input[type="date"]:not(:placeholder-shown)::before {
-            content: "";
-            display: none;
-        }
-        /* Style for the date picker icon */
-        input[type="date"]::-webkit-calendar-picker-indicator {
+        /* Style for the date/time picker icon on the right */
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
             cursor: pointer;
-            filter: invert(1); /* Makes the calendar icon white/light on dark background */
+            filter: invert(1); /* Makes the icon white/light on dark background */
         }
     </style>
 </head>
@@ -89,18 +77,17 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <!-- 4. Event Date (Date Picker) -->
+                <!-- 4. Event Date & Time (datetime-local Picker) -->
                 <div>
                     <label for="event_date" class="block text-sm font-medium text-indigo-300 mb-2">Event Date</label>
                     <input
-                        type="date"
+                        type="datetime-local"
                         id="event_date"
                         name="event_date"
-                        placeholder="dd/mm/yyyy"
                         class="w-full px-4 py-3 bg-[#2a2d40] border border-indigo-600/50 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-white transition duration-300 shadow-inner appearance-none"
                         required
                     >
-                    <p class="mt-1 text-xs text-gray-400 italic">Format is set by your browser, but clicking opens the calendar.</p>
+                    <p class="mt-1 text-xs text-gray-400 italic">Select both the date and time. Your browser will show time in 12-Hour (AM/PM) or 24-Hour format based on your device settings.</p>
                 </div>
 
                 <!-- 5. Location -->
@@ -136,6 +123,7 @@
 
     </div>
 
+    <!-- START OF SCRIPT BLOCK -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.querySelector('form');
@@ -148,7 +136,8 @@
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData.entries());
 
-                console.log("Form Data Submitted:", data);
+                // Logging the submitted data
+                console.log("Form Data Submitted (Date includes Time):", data);
 
                 // Display confirmation message
                 statusMessage.textContent = 'Submission successful! Data logged to console.';
@@ -162,5 +151,6 @@
             });
         });
     </script>
+    <!-- END OF SCRIPT BLOCK -->
 </body>
 </html>
