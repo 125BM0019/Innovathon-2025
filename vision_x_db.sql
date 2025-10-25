@@ -58,8 +58,8 @@ VALUES
 -- Insert some events
 INSERT INTO events (club, title, description, event_date, location)
 VALUES
-('Coding Club', 'Hackathon 2025', 'Join us for the annual 24-hour hackathon. Prizes, food, and more!', 'Oct 30, 9:00 AM', 'Main Auditorium'),
-('Drama Society', 'Spring Play Auditions', 'Auditions for "Hamlet" are now open. No experience necessary.', 'Nov 2, 6:00 PM', 'Theater');
+('Coding Club', 'Hackathon 2025', 'Join us for the annual 24-hour hackathon. Prizes, food, and more!', 'Oct 30, 2025 9:00 AM', 'Main Auditorium'),
+('Drama Society', 'Spring Play Auditions', 'Auditions for "Hamlet" are now open. No experience necessary.', 'Nov 2, 2025 6:00 PM', 'Theater');
 
 -- Insert some help requests
 INSERT INTO help_requests (title, posted_by, status, description)
