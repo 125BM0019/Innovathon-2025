@@ -136,31 +136,63 @@
 
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.querySelector('form');
-            const statusMessage = document.getElementById('statusMessage');
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        const statusMessage = document.getElementById('statusMessage');
 
-            // Handle the form submission (for demo purposes)
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-                console.log("Form Data Submitted:", data);
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
 
-                // Display confirmation message
-                statusMessage.textContent = 'Submission successful! Data logged to console.';
-                statusMessage.classList.remove('hidden');
-                
-                // Reset form after a short delay
-                setTimeout(() => {
-                    form.reset();
-                    statusMessage.classList.add('hidden');
-                }, 4000);
-            });
+            // The 'event_date' from the HTML input is already in YYYY-MM-DD format (a string), 
+            // which is compatible with your VARCHAR(100) column. We do NOT need to modify it.
+
+            // Show a submitting message
+            statusMessage.textContent = 'Submitting...';
+            statusMessage.classList.remove('hidden', 'bg-green-900/50', 'text-green-300', 'bg-red-900/50', 'text-red-300');
+            statusMessage.classList.add('bg-indigo-900/50', 'text-indigo-300');
+
+            try {
+                const response = await fetch('/api/events/submit', { // New API endpoint
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    statusMessage.textContent = '✅ Event submitted successfully and is now visible on the dashboard!';
+                    statusMessage.classList.remove('bg-indigo-900/50', 'text-indigo-300');
+                    statusMessage.classList.add('bg-green-900/50', 'text-green-300');
+                    form.reset(); // Clear the form on success
+                } else {
+                    // Handle server-side errors
+                    statusMessage.textContent = `❌ Submission failed: ${result.message || 'Server error'}`;
+                    statusMessage.classList.remove('bg-indigo-900/50', 'text-indigo-300');
+                    statusMessage.classList.add('bg-red-900/50', 'text-red-300');
+                }
+
+            } catch (error) {
+                // Handle network or fetch errors
+                console.error('Network or submission error:', error);
+                statusMessage.textContent = '❌ Network error. Could not connect to the server.';
+                statusMessage.classList.remove('bg-indigo-900/50', 'text-indigo-300');
+                statusMessage.classList.add('bg-red-900/50', 'text-red-300');
+            }
+            
+            // Hide the status message after a short delay
+            setTimeout(() => {
+                statusMessage.classList.add('hidden');
+                statusMessage.classList.remove('bg-green-900/50', 'text-green-300', 'bg-red-900/50', 'text-red-300');
+            }, 5000);
         });
-    </script>
+    });
+</script>
 </body>
 </html>

@@ -92,6 +92,47 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// --- NEW ROUTE: Submit Event Data ---
+app.post('/api/events/submit', async (req, res) => {
+    // 1. Destructure data from the request body
+    const { club, title, description, event_date, location } = req.body;
+    
+    // Simple validation
+    if (!club || !title || !description || !event_date || !location) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'All fields (Club, Title, Description, Date, Location) are required.' 
+        });
+    }
+
+    try {
+        // 2. SQL Query to insert the new event into the 'events' table
+        // Note: The data is inserted into the event_date column as a string ($4) 
+        // which matches your table schema (VARCHAR).
+        const result = await pool.query(
+            `INSERT INTO events (club, title, description, event_date, location) 
+             VALUES ($1, $2, $3, $4, $5) 
+             RETURNING *`,
+            [club, title, description, event_date, location]
+        );
+
+        // 3. Send a success response back to the client
+        res.status(201).json({ 
+            success: true, 
+            message: 'Event submitted successfully.', 
+            event: result.rows[0] 
+        });
+
+    } catch (err) {
+        // 4. Handle database or server errors
+        console.error('Error inserting new event:', err.message);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to submit event due to a server error.' 
+        });
+    }
+});
+
 // API endpoint to get the current user
 app.get('/api/user', async (req, res) => {
     // In a real app, you'd get the user ID from a secure session or token
