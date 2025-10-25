@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to Login</title>
+    <!-- 
+        This meta tag performs an immediate client-side redirect.
+        It tells the browser to go to 'login.html' after 0 seconds.
+    -->
+    <meta http-equiv="refresh" content="0; url=login.html">
+    <script>
+        // Fallback JavaScript redirect for older browsers/security constraints
+        window.onload = function() {
+            if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('/index.html')) {
+                window.location.href = 'login.html';
+            }
+        };
+    </script>
+</head>
+<body>
+    <p>Loading application...</p>
+    <p>If you are not redirected automatically, please click <a href="login.html">here</a>.</p>
+</body>
+</html>
