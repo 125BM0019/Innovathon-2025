@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ambassador Page - Creative Submission</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Use Inter font family -->
     <style>
-        /* Fix: Corrected the Google Fonts URL from fonts.fonts.googleapis to fonts.googleapis */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
@@ -18,7 +15,8 @@
         /* Style for the date/time picker icon on the right */
         input[type="datetime-local"]::-webkit-calendar-picker-indicator {
             cursor: pointer;
-            filter: invert(1); /* Makes the icon white/light on dark background */
+            /* Filter invert(1) makes the icon white/light on dark background */
+            filter: invert(1);
         }
     </style>
 </head>
@@ -26,7 +24,6 @@
 
     <div class="w-full max-w-2xl bg-[#1c1f30] rounded-3xl shadow-2xl p-6 sm:p-10 border border-indigo-700/50 transform transition duration-500 hover:shadow-indigo-500/30">
 
-        <!-- Header Section -->
         <header class="text-center mb-8 sm:mb-12">
             <h1 class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-sky-400 tracking-tight">
                 Ambassador Page
@@ -34,10 +31,8 @@
             <p class="mt-2 text-indigo-300/80 text-lg">Submit your club event details with precision.</p>
         </header>
 
-        <!-- Form Section -->
-        <form class="space-y-6">
+        <form id="eventForm" class="space-y-6">
 
-            <!-- 1. Club Name -->
             <div>
                 <label for="club" class="block text-sm font-medium text-indigo-300 mb-2">Club</label>
                 <input
@@ -50,7 +45,6 @@
                 >
             </div>
 
-            <!-- 2. Event Title -->
             <div>
                 <label for="title" class="block text-sm font-medium text-indigo-300 mb-2">Title</label>
                 <input
@@ -63,7 +57,6 @@
                 >
             </div>
 
-            <!-- 3. Description (Textarea) -->
             <div>
                 <label for="description" class="block text-sm font-medium text-indigo-300 mb-2">Description</label>
                 <textarea
@@ -77,7 +70,6 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <!-- 4. Event Date & Time (datetime-local Picker) -->
                 <div>
                     <label for="event_date" class="block text-sm font-medium text-indigo-300 mb-2">Event Date</label>
                     <input
@@ -90,7 +82,6 @@
                     <p class="mt-1 text-xs text-gray-400 italic">Select both the date and time. Your browser will show time in 12-Hour (AM/PM) or 24-Hour format based on your device settings.</p>
                 </div>
 
-                <!-- 5. Location -->
                 <div>
                     <label for="location" class="block text-sm font-medium text-indigo-300 mb-2">Location</label>
                     <input
@@ -104,52 +95,121 @@
                 </div>
             </div>
 
-            <!-- Submit Button -->
             <div class="pt-4">
                 <button
                     type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-700 hover:to-sky-600 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:scale-[1.01] active:scale-[0.98]"
+                    id="submitButton"
+                    class="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-700 hover:to-sky-600 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:scale-[1.01] active:scale-[0.98]"
                 >
                     Submit Ambassador Report
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-9 0V3h4v2m-4 0h4"></path></svg>
+                    <svg id="submitIcon" class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-9 0V3h4v2m-4 0h4"></path></svg>
+                    <div id="loadingSpinner" class="hidden w-5 h-5 ml-2 border-2 border-t-2 border-white border-opacity-20 rounded-full animate-spin"></div>
                 </button>
             </div>
             
-            <!-- Simple Success Message Handler (via JavaScript) -->
-            <div id="statusMessage" class="hidden text-center text-sm font-medium p-3 rounded-xl bg-green-900/50 text-green-300">
-                <!-- Message will appear here -->
-            </div>
+            <div id="statusMessage" class="hidden text-center text-sm font-medium p-3 rounded-xl">
+                </div>
         </form>
 
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const form = document.querySelector('form');
+            const form = document.getElementById('eventForm');
             const statusMessage = document.getElementById('statusMessage');
+            const submitButton = document.getElementById('submitButton');
+            const submitIcon = document.getElementById('submitIcon');
+            const loadingSpinner = document.getElementById('loadingSpinner');
 
-            // Handle the form submission (for demo purposes)
-            form.addEventListener('submit', (e) => {
+            // ⚠️ CRITICAL FIX: Replace this with your actual, correct API endpoint! 
+            // This is the most likely place your teammate broke things.
+            const API_ENDPOINT = 'YOUR_VISION_X_DB_SUBMISSION_ENDPOINT_HERE'; 
+
+            /**
+             * Updates the UI to show the status of the submission.
+             * @param {string} type - 'success' or 'error'
+             * @param {string} message - The message to display
+             */
+            const showStatus = (type, message) => {
+                // Clear existing classes
+                statusMessage.className = 'text-center text-sm font-medium p-3 rounded-xl';
+                statusMessage.classList.remove('hidden');
+
+                if (type === 'success') {
+                    statusMessage.classList.add('bg-green-900/50', 'text-green-300');
+                } else if (type === 'error') {
+                    statusMessage.classList.add('bg-red-900/50', 'text-red-300');
+                }
+
+                statusMessage.textContent = message;
+
+                // Hide after a delay
+                setTimeout(() => {
+                    statusMessage.classList.add('hidden');
+                }, 5000);
+            };
+
+            /**
+             * Sets the loading state of the button.
+             * @param {boolean} isLoading 
+             */
+            const setLoading = (isLoading) => {
+                submitButton.disabled = isLoading;
+                if (isLoading) {
+                    submitButton.classList.add('opacity-70', 'cursor-not-allowed');
+                    submitIcon.classList.add('hidden');
+                    loadingSpinner.classList.remove('hidden');
+                } else {
+                    submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+                    submitIcon.classList.remove('hidden');
+                    loadingSpinner.classList.add('hidden');
+                }
+            };
+
+            // Handle the form submission
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
+                setLoading(true);
+
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData.entries());
 
-                // Logging the submitted data
-                console.log("Form Data Submitted (Date includes Time):", data);
+                // Optional: Log data to console for debugging
+                console.log("Attempting Submission with Data:", data);
 
-                // Display confirmation message
-                statusMessage.textContent = 'Submission successful! Data logged to console.';
-                statusMessage.classList.remove('hidden');
-                
-                // Reset form after a short delay
-                setTimeout(() => {
-                    form.reset();
-                    statusMessage.classList.add('hidden');
-                }, 4000);
+                // --- THE CRITICAL FIX: RESTORING THE NETWORK REQUEST ---
+                try {
+                    const response = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // Add any required authorization headers here (e.g., 'Authorization': 'Bearer YOUR_TOKEN')
+                        },
+                        // The event data sent to the backend as JSON
+                        body: JSON.stringify(data) 
+                    });
+
+                    setLoading(false);
+
+                    if (response.ok) {
+                        // Assuming a successful response means the event was added to the DB
+                        showStatus('success', '✅ Event successfully submitted to vision_x_db!');
+                        form.reset(); // Only reset on a confirmed successful submission
+                    } else {
+                        // Handle server-side errors (e.g., 400, 500)
+                        const errorData = await response.json().catch(() => ({ message: 'Server error' }));
+                        console.error("Submission Failed. Server Response:", errorData);
+                        showStatus('error', `❌ Submission failed: ${errorData.message || 'Check console for details.'}`);
+                    }
+
+                } catch (error) {
+                    setLoading(false);
+                    console.error("Network Error during submission:", error);
+                    // Handle network errors (e.g., API endpoint is down or unreachable)
+                    showStatus('error', '🛑 Network error: Could not connect to the submission server.');
+                }
             });
         });
     </script>
-    <!-- END OF SCRIPT BLOCK -->
-</body>
+    </body>
 </html>
