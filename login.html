@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vision X - Login</title>
-    <!-- We will use Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -17,7 +17,7 @@
     <div class="flex min-h-screen items-center justify-center">
         <div class="w-full max-w-md p-8 space-y-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
             <div class="text-center">
-                <h1 class="text-4xl font-bold text-indigo-600 dark:text-indigo-400">Vision X</h1>
+                <h1 class="text-4xl font-bold text-indigo-600 dark:text-indigo-400">Kloom</h1>
                 <p class="mt-2 text-gray-600 dark:text-gray-300">Simplifying Campus Life</p>
             </div>
             
@@ -28,7 +28,7 @@
                     <div class="mt-1">
                         <input id="email" name="email" type="email" autocomplete="email" required
                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                               placeholder="karan@college.edu">
+                               placeholder="Enter your college mail ID">
                     </div>
                 </div>
 
@@ -37,7 +37,7 @@
                     <div class="mt-1">
                         <input id="password" name="password" type="password" autocomplete="current-password" required
                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                               placeholder="password123">
+                               placeholder="Enter Password">
                     </div>
                 </div>
 
@@ -48,7 +48,8 @@
                     </button>
                 </div>
             </form>
-            
+
+            <p class="text-center text-sm text-gray-600 dark:text-gray-300">"Don't have an account? <a href="/register.html" class="text-indigo-600 dark:text-indigo-400 hover:underline">Sign up here.</a>"</p>
             <!-- This message area will show errors -->
             <div id="error-message" class="text-center text-sm text-red-500"></div>
 
