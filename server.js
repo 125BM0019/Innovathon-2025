@@ -19,6 +19,7 @@ const pool = new Pool({
 });
 
 // --- Middleware ---
+app.use(express.urlencoded({ extended: true }));
 // This allows your server to read JSON from requests
 app.use(express.json());
 // This tells express to serve static files (like login.html) from the current folder
@@ -36,25 +37,17 @@ app.get('/dashboard', (req, res) => {
 });
 
 
-app.get('/register.html', (req, res) => {
+app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'register.html'));
 });
 
-app.get('/admin.html', (req, res) => {
+app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-app.post ('/api/register.html', async (req, res) => {
+app.post ('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
-// Simple validation
-    if (!name || !email || !password) {
-        return res.status(400).json({ success: false, message: 'All fields are required' });
-    }
 
-    // In a real app, you MUST HASH the password here using bcrypt
-    const passwordHash = password; // Storing plain text (INSECURE, for demo only)
-    const avatarChar = name.charAt(0).toUpperCase() || '?'; // Get first letter for avatar
-    
     try {
         // Check if the user already exists
         const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
@@ -78,10 +71,6 @@ app.post ('/api/register.html', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     
-    // Simple validation
-    if (!email || !password) {
-        return res.status(400).json({ success: false, message: 'Email and password are required' });
-    }
     // WARNING: THIS IS INSECURE. 
     // In a real app, you MUST hash passwords and compare the hash.
     try {
