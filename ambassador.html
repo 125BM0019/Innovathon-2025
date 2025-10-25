@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambassador Page - Creative Submission</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <style>
+        /* Fix: Corrected the Google Fonts URL from fonts.fonts.googleapis to fonts.googleapis */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0f1c; /* Deep Dark Blue Background */
+            color: #e0e7ff; /* Light text */
+        }
+        /* Style for the date/time picker icon on the right */
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(1); /* Makes the icon white/light on dark background */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+
+    <div class="w-full max-w-2xl bg-[#1c1f30] rounded-3xl shadow-2xl p-6 sm:p-10 border border-indigo-700/50 transform transition duration-500 hover:shadow-indigo-500/30">
+
+        <!-- Header Section -->
+        <header class="text-center mb-8 sm:mb-12">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-sky-400 tracking-tight">
+                Ambassador Page
+            </h1>
+            <p class="mt-2 text-indigo-300/80 text-lg">Submit your club event details with precision.</p>
+        </header>
+
+        <!-- Form Section -->
+        <form class="space-y-6">
+
+            <!-- 1. Club Name -->
+            <div>
+                <label for="club" class="block text-sm font-medium text-indigo-300 mb-2">Club</label>
+                <input
+                    type="text"
+                    id="club"
+                    name="club"
+                    placeholder="E.g., Tech Innovators Society"
+                    class="w-full px-4 py-3 bg-[#2a2d40] border border-indigo-600/50 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-white placeholder-gray-500 transition duration-300 shadow-inner"
+                    required
+                >
+            </div>
+
+            <!-- 2. Event Title -->
+            <div>
+                <label for="title" class="block text-sm font-medium text-indigo-300 mb-2">Title</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="A concise, engaging event name"
+                    class="w-full px-4 py-3 bg-[#2a2d40] border border-indigo-600/50 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-white placeholder-gray-500 transition duration-300 shadow-inner"
+                    required
+                >
+            </div>
+
+            <!-- 3. Description (Textarea) -->
+            <div>
+                <label for="description" class="block text-sm font-medium text-indigo-300 mb-2">Description</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                    placeholder="Write a detailed description of the event, including goals and audience. Use this space generously."
+                    class="w-full px-4 py-3 bg-[#2a2d40] border border-indigo-600/50 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-white placeholder-gray-500 transition duration-300 shadow-inner resize-y"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- 4. Event Date & Time (datetime-local Picker) -->
+                <div>
+                    <label for="event_date" class="block text-sm font-medium text-indigo-300 mb-2">Event Date</label>
+                    <input
+                        type="datetime-local"
+                        id="event_date"
+                        name="event_date"
+                        class="w-full px-4 py-3 bg-[#2a2d40] border border-indigo-600/50 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-white transition duration-300 shadow-inner appearance-none"
+                        required
+                    >
+                    <p class="mt-1 text-xs text-gray-400 italic">Select both the date and time. Your browser will show time in 12-Hour (AM/PM) or 24-Hour format based on your device settings.</p>
+                </div>
+
+                <!-- 5. Location -->
+                <div>
+                    <label for="location" class="block text-sm font-medium text-indigo-300 mb-2">Location</label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        placeholder="E.g., University Auditorium / Online"
+                        class="w-full px-4 py-3 bg-[#2a2d40] border border-indigo-600/50 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-white placeholder-gray-500 transition duration-300 shadow-inner"
+                        required
+                    >
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+                <button
+                    type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-700 hover:to-sky-600 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:scale-[1.01] active:scale-[0.98]"
+                >
+                    Submit Ambassador Report
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-9 0V3h4v2m-4 0h4"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Simple Success Message Handler (via JavaScript) -->
+            <div id="statusMessage" class="hidden text-center text-sm font-medium p-3 rounded-xl bg-green-900/50 text-green-300">
+                <!-- Message will appear here -->
+            </div>
+        </form>
+
+    </div>
+
+    <!-- START OF SCRIPT BLOCK -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            const statusMessage = document.getElementById('statusMessage');
+
+            // Handle the form submission (for demo purposes)
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                // Logging the submitted data
+                console.log("Form Data Submitted (Date includes Time):", data);
+
+                // Display confirmation message
+                statusMessage.textContent = 'Submission successful! Data logged to console.';
+                statusMessage.classList.remove('hidden');
+                
+                // Reset form after a short delay
+                setTimeout(() => {
+                    form.reset();
+                    statusMessage.classList.add('hidden');
+                }, 4000);
+            });
+        });
+    </script>
+    <!-- END OF SCRIPT BLOCK -->
+</body>
+</html>
