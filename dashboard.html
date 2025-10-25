@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision X - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Create a custom icon size */
+        .icon-sm { width: 20px; height: 20px; }
+        .icon-md { width: 24px; height: 24px; }
+        /* Style for the active nav item */
+        .nav-active {
+            background-color: #4f46e5; /* indigo-700 */
+            color: white;
+        }
+        /* Simple spinner for loading state */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #4f46e5; /* Indigo */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+    
+    <div class="flex h-screen">
+        <nav class="w-64 bg-white dark:bg-gray-800 shadow-lg flex flex-col">
+            <div class="p-6 text-center">
+                <h1 class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">Kloom</h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Simplifying Campus Life</p>
+            </div>
+            
+            <ul class="flex-1 px-4 space-y-2">
+                <li>
+                    <a href="#dashboard" class="flex items-center p-3 rounded-lg space-x-3 nav-active nav-link" data-target="dashboard-content">
+                        <i data-lucide="layout-dashboard" class="icon-sm"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#events" class="flex items-center p-3 rounded-lg space-x-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 nav-link" data-target="events-content">
+                        <i data-lucide="calendar" class="icon-sm"></i>
+                        <span>Events & News</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#network" class="flex items-center p-3 rounded-lg space-x-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 nav-link" data-target="network-content">
+                        <i data-lucide="users" class="icon-sm"></i>
+                        <span>Peer Networking</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#help" class="flex items-center p-3 rounded-lg space-x-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 nav-link" data-target="help-content">
+                        <i data-lucide="life-buoy" class="icon-sm"></i>
+                        <span>Emergency Help</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#study" class="flex items-center p-3 rounded-lg space-x-3 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 nav-link" data-target="study-content">
+                        <i data-lucide="timer" class="icon-sm"></i>
+                        <span>Study Tracker</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div id="user-profile-summary" class="flex items-center space-x-3">
+                    <img id="user-avatar" class="w-10 h-10 rounded-full" src="https://placehold.co/100x100/6366f1/white?text=?" alt="User Avatar">
+                    <div>
+                        <p id="user-name" class="font-semibold">Loading...</p>
+                        <a href="login.html" class="text-sm text-red-500 hover:underline">Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-1 p-8 overflow-y-auto">
+            
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-extrabold text-gray-900 dark:text-gray-100">Dashboard</h1>
+                <div class="relative w-full max-w-sm">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 icon-sm text-gray-400 dark:text-gray-500"></i>
+                    <input type="text" placeholder="Search events, peers, or help..."
+                        class="w-full py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+            </div>
+
+            <section id="dashboard-content" class="page-content">
+                <h2 id="welcome-message" class="text-3xl font-semibold mb-6">Welcome back!</h2>
+
+                <div id="dashboard-summary-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="loader"></div>
+                        <p class="text-center">Loading Events...</p>
+                    </div>
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="loader"></div>
+                        <p class="text-center">Loading Peers...</p>
+                    </div>
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="loader"></div>
+                        <p class="text-center">Loading Help...</p>
+                    </div>
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                        <div class="flex items-center space-x-4">
+                            <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
+                                <i data-lucide="timer" class="text-yellow-600 dark:text-yellow-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold">Study Tracker</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">0 hours tracked</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Your Week</h3>
+                    <p class="text-gray-600 dark:text-gray-300">This is where a chart or calendar would go showing upcoming deadlines and study sessions.</p>
+                    <div class="h-64 bg-gray-100 dark:bg-gray-700 rounded-lg mt-4 flex items-center justify-center">
+                        (Productivity Chart Placeholder)
+                    </div>
+                </div>
+            </section>
+
+            <section id="events-content" class="page-content hidden">
+                <h2 class="text-3xl font-semibold mb-6">Events & News</h2>
+                <p class="text-gray-600 dark:text-gray-300">A structured feed of all campus news, club events, and academic deadlines.</p>
+                <div id="events-list" class="mt-6 space-y-6">
+                    <div class="loader"></div>
+                    <p class="text-center">Loading events...</p>
+                </div>
+            </section>
+            
+            <section id="network-content" class="page-content hidden">
+                <h2 class="text-3xl font-semibold mb-6">Peer Networking</h2>
+                <p class="text-gray-600 dark:text-gray-300">Find students with similar interests, courses, or career goals.</p>
+                <div id="profiles-grid" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="loader"></div>
+                    <p class="text-center">Loading profiles...</p>
+                </div>
+            </section>
+
+            <section id="help-content" class="page-content hidden">
+                <h2 class="text-3xl font-semibold mb-6">Emergency Help</h2>
+                <p class="text-gray-600 dark:text-gray-300">A trusted space to get help with small tasks from other students.</p>
+                <div id="help-requests-list" class="mt-6 space-y-6">
+                    <div class="loader"></div>
+                    <p class="text-center">Loading help requests...</p>
+                </div>
+            </section>
+
+            <section id="study-content" class="page-content hidden">
+                <h2 class="text-3xl font-semibold mb-6">Study Tracker</h2>
+                <p class="text-gray-600 dark:text-gray-300">Track your study hours and see where your time is going.</p>
+                <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-4" id="timer-status-title">Start a New Session</h3>
+                    <div class="space-y-4">
+                        <div id="timer-input-area">
+                            <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subject</label>
+                            <input id="subject" name="subject" type="text" placeholder="e.g., Calculus Homework"
+                                class="w-full max-w-sm px-3 py-2 mt-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm">
+                        </div>
+                        
+                        <div id="timer-display" class="text-6xl font-extrabold text-indigo-600 dark:text-indigo-400 my-6 hidden">
+                            00:00:00
+                        </div>
+
+                        <div id="timer-controls" class="flex space-x-4">
+                            <button id="start-stop-button" class="px-6 py-2 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+                                Start Timer
+                            </button>
+                            <button id="reset-button" class="px-6 py-2 font-semibold text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 hidden">
+                                Finish Session
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-xl font-bold mb-4">Study Log</h3>
+                        <div id="study-log-list" class="space-y-2">
+                             <p class="text-gray-500">Your completed study sessions will appear here.</p>
+                        </div>
+                        <div class="h-48 bg-gray-100 dark:bg-gray-700 rounded-lg mt-4 flex items-center justify-center">
+                            (Study History Chart Placeholder)
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- Safe Data Fetching ---
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    // Log the error but don't crash
+                    console.error(`Failed to fetch ${url}: ${response.statusText}`);
+                    return null; // Return null so we can check for it
+                }
+                return response.json();
+            } catch (err) {
+                console.error(`Network error fetching ${url}:`, err);
+                return null; // Return null on network error
+            }
+        }
+
+        // --- Builder Functions (Now with error checking) ---
+
+        function buildUser(user) {
+            // **FIX**: Check if user data exists
+            if (!user) {
+                console.error("Could not load user data");
+                document.getElementById('user-name').textContent = "Error";
+                document.getElementById('welcome-message').textContent = "Welcome!";
+                return;
+            }
+            
+            // Populate user data
+            document.getElementById('user-name').textContent = user.name || "User";
+            // **FIX**: Safely set avatar, use placeholder if null/undefined
+            document.getElementById('user-avatar').src = user.avatar_char || 'https://placehold.co/100x100/6366f1/white?text=?';
+            document.getElementById('user-avatar').alt = user.name || "User";
+            document.getElementById('welcome-message').textContent = `Welcome back, ${user.name ? user.name.split(' ')[0] : 'User'}!`;
+        }
+
+        // **NEW FUNCTION**: Builds the main dashboard summary cards
+        function buildDashboardSummary(events, profiles, requests) {
+            const grid = document.getElementById('dashboard-summary-grid');
+            if (!grid) return; // Exit if grid not found
+
+            let eventsCount = (events && events.length) ? events.length : 0;
+            let profilesCount = (profiles && profiles.length) ? profiles.length : 0;
+            let requestsCount = (requests && requests.length) ? requests.length : 0;
+
+            grid.innerHTML = ''; // Clear all loaders
+
+            // Event Card
+            grid.innerHTML += `
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+                            <i data-lucide="calendar" class="text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-lg font-semibold">Events & News</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">${eventsCount} new events</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Network Card
+            grid.innerHTML += `
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-green-100 dark:bg-green-900 rounded-full">
+                            <i data-lucide="users" class="text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-lg font-semibold">Peer Networking</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">${profilesCount} peers available</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Help Card
+            grid.innerHTML += `
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-red-100 dark:bg-red-900 rounded-full">
+                            <i data-lucide="life-buoy" class="text-red-600 dark:text-red-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-lg font-semibold">Emergency Help</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">${requestsCount} open requests</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Study Tracker Card (static)
+            grid.innerHTML += `
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
+                            <i data-lucide="timer" class="text-yellow-600 dark:text-yellow-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-lg font-semibold">Study Tracker</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">0 hours tracked</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function buildEvents(events) {
+            const list = document.getElementById('events-list');
+            // **FIX**: Check if events data exists
+            if (!events || events.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 text-center">No events found.</p>';
+                return;
+            }
+
+            list.innerHTML = ''; // Clear loader
+            events.forEach(event => {
+                list.innerHTML += `
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden p-6">
+                        <span class="text-sm text-indigo-500 dark:text-indigo-400 font-semibold">${event.club}</span>
+                        <h3 class="text-xl font-bold mt-2">${event.title}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mt-2">${event.description}</p>
+                        <div class="flex items-center mt-4 space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                            <span class="flex items-center"><i data-lucide="calendar" class="icon-sm mr-1.5"></i> ${new Date(event.event_date).toLocaleString()}</span>
+                            <span class="flex items-center"><i data-lucide="map-pin" class="icon-sm mr-1.5"></i> ${event.location}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function buildProfiles(profiles) {
+            const grid = document.getElementById('profiles-grid');
+            // **FIX**: Check if profiles data exists
+            if (!profiles || profiles.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 text-center">No profiles found.</p>';
+                return;
+            }
+
+            grid.innerHTML = ''; // Clear loader
+            profiles.forEach(profile => {
+                grid.innerHTML += `
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md text-center">
+                        <img class="w-24 h-24 rounded-full mx-auto" src="${profile.avatar || 'https://placehold.co/100x100/6366f1/white?text=?'}" alt="${profile.name}">
+                        <h3 class="text-lg font-semibold mt-4">${profile.name}</h3>
+                        <p class="text-sm text-indigo-500 dark:text-indigo-400">${profile.major}</p>
+                        <p class="text-gray-600 dark:text-gray-300 mt-2 text-sm">Interests: ${profile.interests}</p>
+                        <button class="mt-4 w-full px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Connect</button>
+                    </div>
+                `;
+            });
+        }
+
+        function buildHelp(requests) {
+            const list = document.getElementById('help-requests-list');
+            // **FIX**: Check if requests data exists
+            if (!requests || requests.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 text-center">No open help requests.</p>';
+                return;
+            }
+
+            list.innerHTML = ''; // Clear loader
+            requests.forEach(request => {
+                list.innerHTML += `
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">${request.title}</h3>
+                            <span class="px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 dark:text-green-100 dark:bg-green-800 rounded-full">${request.status}</span>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mt-2">Posted by <span class="font-semibold">${request.posted_by}</span></p>
+                        <p class="text-gray-600 dark:text-gray-300 mt-2">${request.description}</p>
+                        <button class="mt-4 px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">Offer Help</button>
+                    </div>
+                `;
+            });
+        }
+
+        // --- Study Tracker Logic (NEW) ---
+        let timerInterval;
+        let startTime;
+        let running = false;
+        let elapsedTime = 0; // Total elapsed time in milliseconds
+
+        const timerDisplay = document.getElementById('timer-display');
+        const startStopButton = document.getElementById('start-stop-button');
+        const resetButton = document.getElementById('reset-button');
+        const subjectInput = document.getElementById('subject');
+        const timerInputArea = document.getElementById('timer-input-area');
+        const timerStatusTitle = document.getElementById('timer-status-title');
+        const studyLogList = document.getElementById('study-log-list');
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        function updateTimerDisplay() {
+            const currentTime = Date.now();
+            elapsedTime += (currentTime - startTime);
+            startTime = currentTime;
+            timerDisplay.textContent = formatTime(elapsedTime);
+        }
+
+        function startTimer() {
+            if (running) return;
+
+            const subject = subjectInput.value.trim();
+            if (!subject) {
+                alert("Please enter a subject for your study session.");
+                return;
+            }
+
+            running = true;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+
+            // Update UI
+            startStopButton.textContent = 'Pause Timer';
+            startStopButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+            startStopButton.classList.add('bg-red-600', 'hover:bg-red-700');
+            resetButton.classList.remove('hidden');
+            timerDisplay.classList.remove('hidden');
+            timerInputArea.classList.add('hidden');
+            timerStatusTitle.textContent = `Current Session: ${subject}`;
+        }
+
+        function pauseTimer() {
+            if (!running) return;
+
+            running = false;
+            clearInterval(timerInterval);
+            startStopButton.textContent = 'Resume Timer';
+            startStopButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+            startStopButton.classList.add('bg-green-600', 'hover:bg-green-700');
+        }
+
+        function stopTimerAndLog() {
+            pauseTimer();
+            
+            const subject = subjectInput.value.trim();
+            const duration = formatTime(elapsedTime);
+            const durationInHours = (elapsedTime / (1000 * 60 * 60)).toFixed(2);
+            const now = new Date().toLocaleString();
+
+            if (elapsedTime > 1000) { // Log only if time > 1 second
+                 // Add to log
+                const logEntry = document.createElement('div');
+                logEntry.className = 'p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex justify-between items-center';
+                logEntry.innerHTML = `
+                    <span class="font-medium">${subject}</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-300">${duration} (${durationInHours} hrs) - ${now}</span>
+                `;
+                studyLogList.prepend(logEntry); // Add newest at the top
+                
+                // Remove placeholder if it exists
+                const placeholder = studyLogList.querySelector('.text-gray-500');
+                if(placeholder) placeholder.remove();
+
+            }
+
+            // Reset state and UI
+            elapsedTime = 0;
+            subjectInput.value = '';
+            timerDisplay.textContent = '00:00:00';
+            running = false;
+            
+            startStopButton.textContent = 'Start Timer';
+            startStopButton.classList.remove('bg-green-600', 'hover:bg-green-700');
+            startStopButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+            startStopButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            resetButton.classList.add('hidden');
+            timerDisplay.classList.add('hidden');
+            timerInputArea.classList.remove('hidden');
+            timerStatusTitle.textContent = 'Start a New Session';
+        }
+
+        startStopButton.addEventListener('click', () => {
+            if (!running) {
+                startTimer();
+            } else {
+                pauseTimer();
+            }
+        });
+
+        resetButton.addEventListener('click', stopTimerAndLog);
+
+
+        // --- Main Page Load Function ---
+        async function loadDashboardData() {
+            // Fetch all data in parallel
+            const [user, events, profiles, requests] = await Promise.all([
+                fetchData('/api/user'),
+                fetchData('/api/events'),
+                fetchData('/api/profiles'),
+                fetchData('/api/help-requests')
+            ]);
+            
+            // Build all sections
+            buildUser(user);
+            // **FIX**: Call the new dashboard summary function
+            buildDashboardSummary(events, profiles, requests);
+            buildEvents(events);
+            buildProfiles(profiles);
+            buildHelp(requests);
+
+            // Re-render all new icons
+            lucide.createIcons();
+        }
+
+
+        // --- MAIN SCRIPT EXECUTION ---
+        
+        // Wait for the HTML document to be fully loaded
+        document.addEventListener('DOMContentLoaded', (event) => {
+            
+            // **FIX**: Wrap initial icon render in try...catch
+            try {
+                // Render sidebar icons
+                lucide.createIcons(); 
+            } catch (e) {
+                console.error("Lucide initial render failed:", e);
+            }
+            
+            // **FIX**: Wrap data loading in try...catch
+            try {
+                // Load all dynamic content from the server
+                loadDashboardData();
+            } catch (e) {
+                console.error("Error loading dashboard data:", e);
+            }
+
+
+            // --- Simple single-page navigation ---
+            // **FIX**: This code is now protected from earlier errors
+            // and will run, attaching the click listeners.
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pageContents = document.querySelectorAll('.page-content');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    // This is the "hijack"
+                    e.preventDefault(); // <-- This STOPS the URL from changing
+                    
+                    const targetId = link.getAttribute('data-target');
+
+                    // Hide all pages
+                    pageContents.forEach(page => {
+                        page.classList.add('hidden');
+                    });
+
+                    // Show target page
+                    const targetPage = document.getElementById(targetId);
+                    if (targetPage) {
+                        targetPage.classList.remove('hidden');
+                    }
+
+                    // Update active link style
+                    navLinks.forEach(navLink => {
+                        navLink.classList.remove('nav-active');
+                        navLink.classList.add('text-gray-600', 'dark:text-gray-300');
+                    });
+                    link.classList.add('nav-active');
+                    link.classList.remove('text-gray-600', 'dark:text-gray-300');
+                    
+                    // Update URL hash manually for history
+                    history.pushState(null, '', link.getAttribute('href'));
+
+                     // Special handling for Study Tracker: If clicked, ensure timer state is visible
+                    if (targetId === 'study-content') {
+                        if (running) {
+                             // If running, show timer display and controls
+                            timerDisplay.classList.remove('hidden');
+                            timerInputArea.classList.add('hidden');
+                            resetButton.classList.remove('hidden');
+                            timerStatusTitle.textContent = `Current Session: ${subjectInput.value.trim()}`;
+                            startStopButton.textContent = 'Pause Timer';
+                            startStopButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-green-600', 'hover:bg-green-700');
+                            startStopButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                        } else if (elapsedTime > 0) {
+                            // If paused, show timer display, allow resume
+                            timerDisplay.classList.remove('hidden');
+                            timerInputArea.classList.add('hidden');
+                            resetButton.classList.remove('hidden');
+                            timerStatusTitle.textContent = `Paused Session: ${subjectInput.value.trim()}`;
+                            startStopButton.textContent = 'Resume Timer';
+                            startStopButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700');
+                            startStopButton.classList.add('bg-green-600', 'hover:bg-green-700');
+                        } else {
+                            // Not running or paused, show input
+                            timerDisplay.classList.add('hidden');
+                            timerInputArea.classList.remove('hidden');
+                            resetButton.classList.add('hidden');
+                            timerStatusTitle.textContent = 'Start a New Session';
+                            startStopButton.textContent = 'Start Timer';
+                            startStopButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'bg-red-600', 'hover:bg-red-700');
+                            startStopButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                        }
+                    }
+                });
+            });
+            
+            // Handle browser back/forward buttons
+            window.onpopstate = () => {
+                const hash = window.location.hash || '#dashboard';
+                const targetLink = document.querySelector(`.nav-link[href="${hash}"]`);
+                if (targetLink) {
+                    // Manually trigger click to ensure logic runs
+                    targetLink.click(); 
+                }
+            };
+
+            // Set initial state on load based on hash
+            const initialHash = window.location.hash || '#dashboard';
+            const initialLink = document.querySelector(`.nav-link[href="${initialHash}"]`);
+            if (initialLink) {
+                 // Trigger a synthetic click to set initial page/styles
+                initialLink.dispatchEvent(new Event('click'));
+            } else {
+                 // Default to dashboard if hash is invalid
+                document.getElementById('dashboard-content').classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
