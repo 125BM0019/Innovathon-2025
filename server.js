@@ -23,9 +23,8 @@ const pool = new Pool({
 app.use(express.json());
 // This tells express to serve static files (like login.html) from the current folder
 app.use(express.static(__dirname)); 
-
 // --- HTML Page Routes (Serving the Menu) ---
-
+let currentLoggedInUser = null;
 // When someone visits http://localhost:3000/, send them login.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
@@ -36,13 +35,53 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'VisionXdashboard.html'));
 });
 
-// --- API Routes (Taking Orders) ---
-// This is what your dashboard's JavaScript will call
 
-// API endpoint for login
+app.get('/register.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'register.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.post ('/api/register.html', async (req, res) => {
+    const { name, email, password } = req.body;
+// Simple validation
+    if (!name || !email || !password) {
+        return res.status(400).json({ success: false, message: 'All fields are required' });
+    }
+
+    // In a real app, you MUST HASH the password here using bcrypt
+    const passwordHash = password; // Storing plain text (INSECURE, for demo only)
+    const avatarChar = name.charAt(0).toUpperCase() || '?'; // Get first letter for avatar
+    
+    try {
+        // Check if the user already exists
+        const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ success: false, message: 'User already exists' });
+        }
+
+        // Create a new user
+        const newUser = await pool.query(
+            'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING *',
+            [name, email, password]
+        );
+
+        res.status(201).json({ success: true, user: newUser.rows[0] });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     
+    // Simple validation
+    if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
     // WARNING: THIS IS INSECURE. 
     // In a real app, you MUST hash passwords and compare the hash.
     try {
