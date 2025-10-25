@@ -19,7 +19,7 @@ const pool = new Pool({
 // --- Middleware ---
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// This tells express to serve static files (like login.html, Ambassador_Page.html) from the current folder
+// This tells express to serve static files (like login.html, Aambassador.html) from the current folder
 app.use(express.static(__dirname)); 
 
 // --- User Session Global Variable (Holds the ID of the currently logged-in user) ---
