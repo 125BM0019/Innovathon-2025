@@ -60,6 +60,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // This tells express to serve static files (like login.html, Ambassador_Page.html) from the current folder
 app.use(express.static(__dirname)); 
+app.get('/', (req, res) => {
+  res.send(`Server is running on port ${PORT}. DB connection status logged above. Environment: ${isProduction ? 'Production' : 'Development'}`);
+});
+
+// --- 5. SERVER START (Crucial step that was missing) ---
+app.listen(PORT, () => {
+  console.log(`Server successfully started and listening on port ${PORT}.`);
+});
+
+
+// Export the pool instance so it can be used in your route handlers (e.g., in /api/users)
+module.exports = {
+  app,
+  pool,
+  PORT,
+};
 
 // --- User Session Global Variable (Holds the ID of the currently logged-in user) ---
 let currentLoggedInUser = null; 
