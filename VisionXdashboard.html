@@ -458,6 +458,8 @@ let totalTrackedTime = 0;
 
             if (elapsedTime > 1000) { // Log only if time > 1 second
                  // Add to log
+                totalTrackedTime += elapsedTime; 
+    document.getElementById('total-study-time').textContent = formatTime(totalTrackedTime);
                 const logEntry = document.createElement('div');
                 logEntry.className = 'p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex justify-between items-center';
                 logEntry.innerHTML = `
