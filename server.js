@@ -7,74 +7,72 @@ const path = require('path');
 
 // --- 2. Configuration & App Setup ---
 const app = express();
-
-// RENDER REQUIREMENT: Use the port provided by the environment, 
-// which is set by Render. Fall back to 3000 for local development.
 const PORT = process.env.PORT || 3000; 
 
-// --- 3. Production-Ready Database Connection ---
+// --- 3. Production-Ready Database Connection Logic ---
 
-// Check if we are in a production environment (Render sets NODE_ENV to 'production')
-const isProduction = process.env.NODE_ENV === 'production';
+let pool; // Declare pool globally so we can access it across the application
 
-// The connection string is read from the DATABASE_URL environment variable.
-// This is MANDATORY for Render deployment.
-const connectionString = process.env.DATABASE_URL;
+// Function to initialize database connection and start the Express server
+async function initializeAndStartServer() {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const connectionString = process.env.DATABASE_URL;
 
-const pool = new Pool({
-  connectionString: connectionString, 
-  
-  // Conditional SSL Configuration:
-  // - Render requires SSL when connecting to its managed Postgres.
-  // - rejectUnauthorized: false is often necessary for cloud providers 
-  //   using self-signed certificates on their private networks.
-  ssl: isProduction ? { 
-    rejectUnauthorized: false 
-  } : false,
-});
+  // Initialize the Pool instance
+  pool = new Pool({
+    connectionString: connectionString, 
+    ssl: isProduction ? { 
+      rejectUnauthorized: false 
+    } : false,
+  });
 
-// Optional: Test the connection when the app starts
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('--- ERROR CONNECTING TO DATABASE ---', err.stack);
-  } else {
-    console.log(`Database connection successful at: ${res.rows[0].now}`);
+  try {
+    // Attempt to connect to the database synchronously
+    const client = await pool.connect();
+    const result = await client.query('SELECT NOW()');
+    console.log(`[DB SUCCESS] Database connection confirmed at: ${result.rows[0].now}`);
+    client.release(); // Release the client back to the pool
+
+    // --- 4. EXPRESS MIDDLEWARE AND ROUTES ---
+
+    // Essential Middleware
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+
+    // Serve Static Files (from the root directory)
+    app.use(express.static(__dirname));
+
+    // Simple Health Check Route
+    app.get('/status', (req, res) => {
+      res.send(`Server running on port ${PORT}. DB connected. Env: ${isProduction ? 'Production' : 'Development'}`);
+    });
+
+    // --- 5. SERVER START (Only starts after DB confirmation) ---
+    app.listen(PORT, () => {
+      console.log(`[SERVER START] Server successfully listening on port ${PORT}.`);
+    });
+
+  } catch (err) {
+    // If connection fails, log a FATAL error and exit the process.
+    // This will cause Render to report a failed deployment/service, which is correct.
+    console.error('--- FATAL ERROR: FAILED TO CONNECT TO POSTGRES ---');
+    console.error('Please check your DATABASE_URL and ensure NODE_ENV is set to "production".');
+    console.error('DETAILS:', err.stack);
+    process.exit(1); 
   }
-});
+}
+
+// Start the whole application lifecycle
+initializeAndStartServer();
 
 
-// --- 4. EXPRESS MIDDLEWARE AND ROUTES (Necessary for the server to run) ---
-
-// Essential Middleware for JSON and URL-encoded bodies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// --- SERVE STATIC FRONT-END FILES (CRITICAL FIX) ---
-// Since all files are in the root, we serve static assets from the current directory.
-// This will automatically serve 'index.html' when the user hits the root path '/'.
-app.use(express.static(__dirname));
-
-
-// Simple Health Check Route
-app.get('/status', (req, res) => {
-  res.send(`Server is running on port ${PORT}. DB connection status logged above. Environment: ${isProduction ? 'Production' : 'Development'}`);
-});
-
-// NOTE: Add your API routes here (e.g., app.get('/api/data', ...), using the 'pool' to query the DB)
-
-
-// --- 5. SERVER START (Crucial step) ---
-app.listen(PORT, () => {
-  console.log(`Server successfully started and listening on port ${PORT}.`);
-});
-
-
-// Export the pool instance so it can be used in your route handlers (e.g., in /api/users)
+// Export the pool instance so your API routes can use it
 module.exports = {
   app,
   pool,
   PORT,
 };
+
 
 
 // --- User Session Global Variable (Holds the ID of the currently logged-in user) ---
