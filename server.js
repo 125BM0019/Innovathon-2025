@@ -26,6 +26,7 @@ let pool; // Declare pool globally so we can access it across the application
  * This is crucial for initial deployment on services like Render.
  */
 async function runDatabaseMigrations(dbPool) {
+  // 1. USERS Table (Authentication)
   const createUserTableSql = `
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -35,12 +36,50 @@ async function runDatabaseMigrations(dbPool) {
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
   `;
+
+  // 2. EVENTS Table (Based on API route /api/events/submit)
+  const createEventsTableSql = `
+    CREATE TABLE IF NOT EXISTS events (
+      event_id SERIAL PRIMARY KEY,
+      club VARCHAR(100) NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      description TEXT NOT NULL,
+      event_date TIMESTAMP WITH TIME ZONE NOT NULL,
+      location VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  
+  // 3. PROFILES Table (Based on API route /api/profiles)
+  const createProfilesTableSql = `
+    CREATE TABLE IF NOT EXISTS profiles (
+      profile_id SERIAL PRIMARY KEY,
+      user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+      bio TEXT,
+      phone VARCHAR(20),
+      last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+
+  // 4. HELP REQUESTS Table (Based on API route /api/help-requests)
+  const createHelpRequestsTableSql = `
+    CREATE TABLE IF NOT EXISTS help_requests (
+      request_id SERIAL PRIMARY KEY,
+      user_id INT REFERENCES users(id),
+      subject VARCHAR(255) NOT NULL,
+      description TEXT NOT NULL,
+      status VARCHAR(50) DEFAULT 'Open' NOT NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
   
   console.log('[DB MIGRATION] Starting database setup...');
   await dbPool.query(createUserTableSql);
-  console.log('[DB MIGRATION] "users" table created or already exists.');
-  
-  // Add any other necessary tables here (e.g., CREATE TABLE IF NOT EXISTS posts...)
+  await dbPool.query(createEventsTableSql);
+  await dbPool.query(createProfilesTableSql);
+  await dbPool.query(createHelpRequestsTableSql);
+
+  console.log('[DB MIGRATION] All essential tables created or already exist.');
 }
 
 
@@ -246,7 +285,7 @@ async function initializeAndStartServer() {
       } catch (err) {
         // 4. Handle database or server errors
         console.error('Error inserting new event:', err.message);
-        // Note: You also need a migration script for the 'events' table
+        // Note: This will now run successfully as the migration is included
         res.status(500).json({ 
           success: false, 
           message: 'Failed to submit event due to a server error.' 
@@ -258,7 +297,6 @@ async function initializeAndStartServer() {
     // API endpoint to get all events
     app.get('/api/events', async (req, res) => {
       try {
-        // Note: You need a migration script for the 'events' table
         const result = await pool.query('SELECT * FROM events ORDER BY event_id DESC');
         res.json(result.rows);
       } catch (err) {
@@ -269,7 +307,6 @@ async function initializeAndStartServer() {
     // API endpoint to get all profiles
     app.get('/api/profiles', async (req, res) => {
       try {
-        // Note: You need a migration script for the 'profiles' table
         const result = await pool.query('SELECT * FROM profiles');
         res.json(result.rows);
       } catch (err) {
@@ -280,7 +317,6 @@ async function initializeAndStartServer() {
     // API endpoint to get all help requests
     app.get('/api/help-requests', async (req, res) => {
       try {
-        // Note: You need a migration script for the 'help_requests' table
         const result = await pool.query('SELECT * FROM help_requests WHERE status = $1 ORDER BY request_id DESC', ['Open']);
         res.json(result.rows);
       } catch (err) {

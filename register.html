@@ -106,8 +106,8 @@
             
             <form id="registration-form" class="space-y-5"> 
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
-                    <input type="text" id="name" name="name" placeholder="Enter your full name"
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your full name"
                            class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition duration-300" required>
                 </div>
 
@@ -164,63 +164,64 @@
                 });
             });
 
-            form.addEventListener('submit', async function(event) {
-                event.preventDefault(); // Stop the default form submission
+                form.addEventListener('submit', async function(event) {
+                event.preventDefault(); // Stop the default form submission
 
-                const password = passwordInput.value;
-                const confirmPassword = confirmPasswordInput.value;
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
 
-                // --- Client-Side Password Match Validation (Fix for problem #2) ---
-                if (password !== confirmPassword) {
-                    messageArea.textContent = '🚨 Passwords do not match! Please check again.';
-                    messageArea.classList.add('text-red-400');
-                    passwordInput.value = '';
-                    confirmPasswordInput.value = '';
-                    return; // Stop the AJAX call
-                }
+                // --- Client-Side Password Match Validation (Fix for problem #2) ---
+                if (password !== confirmPassword) {
+                    messageArea.textContent = '🚨 Passwords do not match! Please check again.';
+                    messageArea.classList.add('text-red-400');
+                    passwordInput.value = '';
+                    confirmPasswordInput.value = '';
+                    return; // Stop the AJAX call
+                }
 
-                // Gather form data
-                const formData = {
-                    name: document.getElementById('name').value,
-                    email: document.getElementById('email').value,
-                    password: password,
-                    confirm_password: confirmPassword // Include this for server-side validation
-                };
+                // Gather form data
+                const formData = {
+                    // --- CRITICAL FIX: Changed 'name' to 'username' to match server.js ---
+                    username: document.getElementById('username').value, 
+                    email: document.getElementById('email').value,
+                    password: password,
+                    // confirm_password is not strictly needed for the server's database logic
+                };
 
-                try {
-                    const response = await fetch('/api/register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
-                    
-                    const data = await response.json();
+                try {
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const data = await response.json();
 
-                    // --- Handle Server Response and Redirection (Fix for problem #1) ---
-                    if (response.ok && data.success) { // Status 200-299 & success: true
-                        messageArea.textContent = '✅ Registration successful! Redirecting to login...';
-                        messageArea.classList.add('text-green-400');
-                        
-                        // 🚀 REDIRECTION TO LOGIN PAGE 🚀
-                        setTimeout(() => {
-                            window.location.href = '/login.html'; 
-                        }, 1500); // Wait 1.5 seconds before redirecting
+                    // --- Handle Server Response and Redirection (Fix for problem #1) ---
+                    if (response.ok && data.success) { // Status 200-299 & success: true
+                        messageArea.textContent = '✅ Registration successful! Redirecting to login...';
+                        messageArea.classList.add('text-green-400');
+                        
+                        // 🚀 REDIRECTION TO LOGIN PAGE 🚀
+                        setTimeout(() => {
+                            window.location.href = '/'; // Redirecting to '/' which serves login.html
+                        }, 1500); // Wait 1.5 seconds before redirecting
 
-                    } else {
-                        // Handle registration failure (e.g., email already exists, or server validation failed)
-                        messageArea.textContent = `❌ Registration failed: ${data.message || 'An unknown error occurred.'}`;
-                        messageArea.classList.add('text-red-400');
-                    }
-                } catch (error) {
-                    console.error('Network or Parse Error:', error);
-                    messageArea.textContent = '⚠️ Could not connect to the server.';
-                    messageArea.classList.add('text-yellow-400');
-                }
-            });
+                    } else {
+                        // Handle registration failure (e.g., email already exists, or server validation failed)
+                        messageArea.textContent = `❌ Registration failed: ${data.message || 'An unknown error occurred.'}`;
+                        messageArea.classList.add('text-red-400');
+                    }
+                } catch (error) {
+                    console.error('Network or Parse Error:', error);
+                    messageArea.textContent = '⚠️ Could not connect to the server.';
+                    messageArea.classList.add('text-yellow-400');
+                }
+            });
 
-        });
+        });
     </script>
 </body>
 </html>
