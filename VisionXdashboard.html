@@ -294,19 +294,22 @@
                 </div>
             `;
             // Study Tracker Card (static)
-            grid.innerHTML += `
-                <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-                    <div class="flex items-center space-x-4">
-                        <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
-                            <i data-lucide="timer" class="text-yellow-600 dark:text-yellow-400"></i>
-                        </div>
-                        <div>
-                            <p class="text-lg font-semibold">Study Tracker</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">0 hours tracked</p>
-                        </div>
-                    </div>
-                </div>
-            `;
+            // Study Tracker Card
+grid.innerHTML += `
+    <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md" id="study-summary-card">
+        <div class="flex items-center space-x-4">
+            <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
+                <i data-lucide="timer" class="text-yellow-600 dark:text-yellow-400"></i>
+            </div>
+            <div>
+                <p class="text-lg font-semibold">Study Tracker</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Total: <span id="total-study-time">${formatTime(totalTrackedTime)}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+`;
         }
 
         function buildEvents(events) {
@@ -380,10 +383,13 @@
         }
 
         // --- Study Tracker Logic (NEW) ---
-        let timerInterval;
-        let startTime;
-        let running = false;
-        let elapsedTime = 0; // Total elapsed time in milliseconds
+       // --- Study Tracker Logic (NEW) ---
+let timerInterval;
+let startTime;
+let running = false;
+let elapsedTime = 0;
+let totalTrackedTime = 0; 
+// ...
 
         const timerDisplay = document.getElementById('timer-display');
         const startStopButton = document.getElementById('start-stop-button');
@@ -394,12 +400,13 @@
         const studyLogList = document.getElementById('study-log-list');
 
         function formatTime(ms) {
-            const totalSeconds = Math.floor(ms / 1000);
-            const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-            const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-            const seconds = String(totalSeconds % 60).padStart(2, '0');
-            return `${hours}:${minutes}:${seconds}`;
-        }
+    const totalSeconds = Math.floor(ms / 1000);
+    // ... (rest of the calculation is fine)
+    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+    const seconds = String(totalSeconds % 60).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}
 
         function updateTimerDisplay() {
             const currentTime = Date.now();
