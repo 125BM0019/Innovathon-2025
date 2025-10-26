@@ -42,29 +42,28 @@ pool.query('SELECT NOW()', (err, res) => {
   }
 });
 
-// Export the pool instance so it can be used in your route handlers (e.g., in /api/users)
-module.exports = {
-  app,
-  pool,
-  PORT,
-};
 
-// --- After this block, you will typically start your middleware and routes ---
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-// ...
+// --- 4. EXPRESS MIDDLEWARE AND ROUTES (Necessary for the server to run) ---
 
-
-// --- Middleware ---
-app.use(express.urlencoded({ extended: true }));
+// Essential Middleware for JSON and URL-encoded bodies
 app.use(express.json());
-// This tells express to serve static files (like login.html, Ambassador_Page.html) from the current folder
-app.use(express.static(__dirname)); 
-app.get('/', (req, res) => {
+app.use(express.urlencoded({ extended: true }));
+
+// --- SERVE STATIC FRONT-END FILES (CRITICAL FIX) ---
+// Since all files are in the root, we serve static assets from the current directory.
+// This will automatically serve 'index.html' when the user hits the root path '/'.
+app.use(express.static(__dirname));
+
+
+// Simple Health Check Route
+app.get('/status', (req, res) => {
   res.send(`Server is running on port ${PORT}. DB connection status logged above. Environment: ${isProduction ? 'Production' : 'Development'}`);
 });
 
-// --- 5. SERVER START (Crucial step that was missing) ---
+// NOTE: Add your API routes here (e.g., app.get('/api/data', ...), using the 'pool' to query the DB)
+
+
+// --- 5. SERVER START (Crucial step) ---
 app.listen(PORT, () => {
   console.log(`Server successfully started and listening on port ${PORT}.`);
 });
@@ -76,6 +75,7 @@ module.exports = {
   pool,
   PORT,
 };
+
 
 // --- User Session Global Variable (Holds the ID of the currently logged-in user) ---
 let currentLoggedInUser = null; 
