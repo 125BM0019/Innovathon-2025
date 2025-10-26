@@ -233,11 +233,11 @@
             }
             
             // Populate user data
-            document.getElementById('user-name').textContent = user.name || "User";
+            document.getElementById('user-name').textContent = user.username || "User";
             // **FIX**: Safely set avatar, use placeholder if null/undefined
             document.getElementById('user-avatar').src = user.avatar_char || 'https://placehold.co/100x100/6366f1/white?text=?';
-            document.getElementById('user-avatar').alt = user.name || "User";
-            document.getElementById('welcome-message').textContent = `Welcome back, ${user.name ? user.name.split(' ')[0] : 'User'}!`;
+            document.getElementById('user-avatar').alt = user.username || "User";
+            document.getElementById('welcome-message').textContent = `Welcome back, ${user.username ? user.username.split(' ')[0] : 'User'}!`;
         }
 
         // **NEW FUNCTION**: Builds the main dashboard summary cards
