@@ -5,13 +5,42 @@ const path = require('path');
 // If you are using .env files for local development, you should also require dotenv here:
 // require('dotenv').config(); 
 
-// --- 2. Configuration & App Setup ---
+// --- 2. Configuration & App Setup (Middleware MUST go here) ---
 const app = express();
 const PORT = process.env.PORT || 3000; 
+
+// --- CRITICAL FIX: Essential Middleware for JSON and URL-encoded bodies ---
+// These MUST be registered early so req.body is defined for all subsequent routes.
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 // --- 3. Production-Ready Database Connection Logic ---
 
 let pool; // Declare pool globally so we can access it across the application
+
+/**
+ * Runs essential SQL commands to ensure the database schema is ready.
+ * This is crucial for initial deployment on services like Render.
+ */
+async function runDatabaseMigrations(dbPool) {
+  const createUserTableSql = `
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(50) UNIQUE NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      password_hash VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  
+  console.log('[DB MIGRATION] Starting database setup...');
+  await dbPool.query(createUserTableSql);
+  console.log('[DB MIGRATION] "users" table created or already exists.');
+  
+  // Add any other necessary tables here (e.g., CREATE TABLE IF NOT EXISTS posts...)
+}
+
 
 // Function to initialize database connection and start the Express server
 async function initializeAndStartServer() {
@@ -27,17 +56,16 @@ async function initializeAndStartServer() {
   });
 
   try {
-    // Attempt to connect to the database synchronously
+    // Attempt to connect and confirm DB is reachable
     const client = await pool.connect();
     const result = await client.query('SELECT NOW()');
     console.log(`[DB SUCCESS] Database connection confirmed at: ${result.rows[0].now}`);
     client.release(); // Release the client back to the pool
+    
+    // --- CRITICAL STEP: RUN MIGRATIONS ---
+    await runDatabaseMigrations(pool); 
 
-    // --- 4. EXPRESS MIDDLEWARE AND ROUTES ---
-
-    // Essential Middleware
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
+    // --- 4. ROUTES ---
 
     // Serve Static Files (from the root directory)
     app.use(express.static(__dirname));
@@ -47,16 +75,18 @@ async function initializeAndStartServer() {
       res.send(`Server running on port ${PORT}. DB connected. Env: ${isProduction ? 'Production' : 'Development'}`);
     });
 
-    // --- 5. SERVER START (Only starts after DB confirmation) ---
+    // NOTE: Add your API routes here that use the 'pool' to query the DB
+    // All routes added here or later will now correctly receive req.body
+
+    // --- 5. SERVER START (Only starts after DB confirmation and migrations) ---
     app.listen(PORT, () => {
       console.log(`[SERVER START] Server successfully listening on port ${PORT}.`);
     });
 
   } catch (err) {
-    // If connection fails, log a FATAL error and exit the process.
-    // This will cause Render to report a failed deployment/service, which is correct.
-    console.error('--- FATAL ERROR: FAILED TO CONNECT TO POSTGRES ---');
-    console.error('Please check your DATABASE_URL and ensure NODE_ENV is set to "production".');
+    // If connection or migration fails, log a FATAL error and exit the process.
+    console.error('--- FATAL ERROR: FAILED TO CONNECT OR MIGRATE POSTGRES ---');
+    console.error('Please check your DATABASE_URL, Region, and PostgreSQL credentials.');
     console.error('DETAILS:', err.stack);
     process.exit(1); 
   }
@@ -72,6 +102,7 @@ module.exports = {
   pool,
   PORT,
 };
+
 
 
 
