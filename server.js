@@ -10,9 +10,9 @@ const PORT = 3000; // Port your server will run on
 // --- Database Connection ---
 const pool = new Pool({
     user: 'postgres',     
-    host: 'localhost',
+    host: 'dpg-d3umvmali9vc73c7p9u0-a',
     database: 'vision_x_db',     
-    password: 'QwGh34&@bloke',
+    password: 'dpg-d3umvmali9vc73c7p9u0-a',
     port: 5432,
 });
 
