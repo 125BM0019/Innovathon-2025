@@ -82,7 +82,7 @@
                     <img id="user-avatar" class="w-10 h-10 rounded-full" src="https://placehold.co/100x100/6366f1/white?text=?" alt="User Avatar">
                     <div>
                         <p id="user-name" class="font-semibold">Loading...</p>
-                        <a href="login.html" class="text-sm text-red-500 hover:underline">Log Out</a>
+                        <a href="#" id="logout-link" class="text-sm text-red-500 hover:underline">Log Out</a>
                     </div>
                 </div>
             </div>
@@ -207,8 +207,10 @@
     <script>
         // --- Safe Data Fetching ---
         async function fetchData(url) {
-            try {
-                const response = await fetch(url);
+    try {
+        // Ensure that if a userId parameter is present in the URL, it is included in the fetch
+        const response = await fetch(url);
+        // ... (rest of the function remains the same)
                 if (!response.ok) {
                     // Log the error but don't crash
                     console.error(`Failed to fetch ${url}: ${response.statusText}`);
@@ -502,14 +504,39 @@ let totalTrackedTime = 0;
 
 
         // --- Main Page Load Function ---
-        async function loadDashboardData() {
-            // Fetch all data in parallel
-            const [user, events, profiles, requests] = await Promise.all([
-                fetchData('/api/user'),
-                fetchData('/api/events'),
-                fetchData('/api/profiles'),
-                fetchData('/api/help-requests')
-            ]);
+async function loadDashboardData() {
+    
+    // CRITICAL FIX: Session Enforcement - Get the user ID from local storage
+    const userId = localStorage.getItem('kloom_user_id');
+    if (!userId) {
+        // If no user ID is found, redirect to login immediately
+        window.location.href = '/'; 
+        return; // Stop execution
+    }
+    
+    // New function to handle logout
+    const logoutLink = document.getElementById('logout-link');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Clear the stored session ID
+            localStorage.removeItem('kloom_user_id');
+            // Redirect to the login page (which is now '/')
+            window.location.href = '/';
+        });
+    }
+
+    // Fetch all data in parallel
+    const [user, events, profiles, requests] = await Promise.all([
+        // CRITICAL FIX: Pass the userId in the URL query string
+        fetchData(`/api/user?id=${userId}`),
+        fetchData('/api/events'),
+        fetchData('/api/profiles'),
+        fetchData('/api/help-requests')
+    ]);
+    
+    // ... (rest of the function remains the same: buildUser(user); etc.)
+}
             
             // Build all sections
             buildUser(user);
@@ -521,7 +548,6 @@ let totalTrackedTime = 0;
 
             // Re-render all new icons
             lucide.createIcons();
-        }
 
 
         // --- MAIN SCRIPT EXECUTION ---

@@ -78,15 +78,29 @@
 
                 const data = await response.json();
 
-                if (data.success) {
-                    // SUCCESS!
-                    errorMessage.textContent = 'Login successful! Redirecting...';
-                    // Redirect to the dashboard page
-                    window.location.href = '/dashboard';
-                } else {
-                    // FAILED!
-                    errorMessage.textContent = data.message || 'Login failed. Please try again.';
-                }
+               if (data.success) {
+    // SUCCESS!
+    
+    // CRITICAL: Store the unique user ID on the client machine
+    // We check for data.user.id to ensure the server response is valid
+    if (data.user && data.user.id) {
+        localStorage.setItem('kloom_user_id', data.user.id);
+        
+        errorMessage.textContent = '✅ Login successful! Redirecting...';
+        
+        // Use a short delay for better user experience
+        setTimeout(() => {
+            window.location.href = '/dashboard';
+        }, 500); 
+
+    } else {
+        // Handle unexpected success format
+        errorMessage.textContent = 'Login failed: Invalid user data received.';
+    }
+} else {
+    // FAILED!
+    errorMessage.textContent = data.message || 'Login failed. Please try again.';
+}
             } catch (err) {
                 console.error('Login error:', err);
                 errorMessage.textContent = 'Could not connect to the server. Is it running?';

@@ -118,24 +118,16 @@ async function initializeAndStartServer() {
     
     // --- HTML Page Routes (Serving the Menu) ---
 
-    // When someone visits http://localhost:3000/, send them login.html
-    app.get('/', (req, res) => {
-      // If a user is logged in, redirect them to the dashboard immediately
-      if (currentLoggedInUser) {
-        return res.redirect('/dashboard');
-      }
-      res.sendFile(path.join(__dirname, 'login.html'));
-    });
+    
+// Root path always serves the login page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
 
-    // When someone logs in (or visits /dashboard), send them dashboard.html
-    app.get('/dashboard', (req, res) => {
-      // Basic check: if no user ID is stored, redirect to login
-      if (!currentLoggedInUser) {
-        return res.redirect('/');
-      }
-      // NOTE: Assuming your dashboard file is named 'VisionXdashboard.html'
-      res.sendFile(path.join(__dirname, 'VisionXdashboard.html')); 
-    });
+// Dashboard path always serves the dashboard HTML; client side will validate session
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'VisionXdashboard.html')); 
+});
 
     // Route to serve the Ambassador Submission Page
     app.get('/ambassador', (req, res) => {
@@ -219,12 +211,7 @@ async function initializeAndStartServer() {
         }
     });
 
-    // NEW API endpoint for logging out
-    app.post('/api/logout', (req, res) => {
-        currentLoggedInUser = null; // Clear the session variable
-        res.json({ success: true, message: 'Logged out successfully.' });
-    });
-
+   
     // --- Dynamic Data API Endpoints ---
 
     // API endpoint to get the current user
@@ -350,5 +337,4 @@ module.exports = {
   PORT,
 };
 
-// --- User Session Global Variable (Holds the ID of the currently logged-in user) ---
-let currentLoggedInUser = null; 
+
