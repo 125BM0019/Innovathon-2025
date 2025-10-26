@@ -1,25 +1,64 @@
-// --- Import Required Tools ---
-const express = require('express'); // The web server framework
-const { Pool } = require('pg');     // The PostgreSQL driver
-const path = require('path');         // Helper for file paths
+// --- 1. Import Required Tools ---
+const express = require('express');
+const { Pool } = require('pg'); 
+const path = require('path');
+// If you are using .env files for local development, you should also require dotenv here:
+// require('dotenv').config(); 
 
-// --- Configuration ---
+// --- 2. Configuration & App Setup ---
 const app = express();
-const PORT = 3000; // Port your server will run on
 
-// --- Database Connection ---
+// RENDER REQUIREMENT: Use the port provided by the environment, 
+// which is set by Render. Fall back to 3000 for local development.
+const PORT = process.env.PORT || 3000; 
+
+// --- 3. Production-Ready Database Connection ---
+
+// Check if we are in a production environment (Render sets NODE_ENV to 'production')
+const isProduction = process.env.NODE_ENV === 'production';
+
+// The connection string is read from the DATABASE_URL environment variable.
+// This is MANDATORY for Render deployment.
+const connectionString = process.env.DATABASE_URL;
+
 const pool = new Pool({
-    user: 'vision_x_db_user',     
-    host: 'dpg-d3umvmali9vc73c7p9u0-a',
-    database: 'vision_x_db',     
-    password: 'dpg-d3umvmali9vc73c7p9u0-a',
-    port: 5432,
+  connectionString: connectionString, 
+  
+  // Conditional SSL Configuration:
+  // - Render requires SSL when connecting to its managed Postgres.
+  // - rejectUnauthorized: false is often necessary for cloud providers 
+  //   using self-signed certificates on their private networks.
+  ssl: isProduction ? { 
+    rejectUnauthorized: false 
+  } : false,
 });
+
+// Optional: Test the connection when the app starts
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('--- ERROR CONNECTING TO DATABASE ---', err.stack);
+  } else {
+    console.log(`Database connection successful at: ${res.rows[0].now}`);
+  }
+});
+
+// Export the pool instance so it can be used in your route handlers (e.g., in /api/users)
+module.exports = {
+  app,
+  pool,
+  PORT,
+};
+
+// --- After this block, you will typically start your middleware and routes ---
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// ...
+
 
 // --- Middleware ---
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// This tells express to serve static files (like login.html, Aambassador.html) from the current folder
+// This tells express to serve static files (like login.html, Ambassador_Page.html) from the current folder
 app.use(express.static(__dirname)); 
 
 // --- User Session Global Variable (Holds the ID of the currently logged-in user) ---
